@@ -9,7 +9,7 @@ const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 900;
 
 // Define constants for later
-const int CLOTH_WIDTH = 32; // number of points in grid
+const int CLOTH_WIDTH = 24; // number of points in grid
 const int CLOTH_HEIGHT = CLOTH_WIDTH;
 const float CLOTH_SIZE = SCREEN_HEIGHT / CLOTH_WIDTH; // Makes sure the cloth fits and is large on screen no matter the dimesions
 const float GRAVITY = 35.0f; // to pull points down
@@ -213,7 +213,7 @@ int main()
     //Set up the window using raylib
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Cloth Simulation");
     //Set a FPS cap
-    SetTargetFPS(60);
+    SetTargetFPS(144);
 
     // Initialize the cloth line-34
     InitCloth();
@@ -222,7 +222,7 @@ int main()
     while (!WindowShouldClose())
     {
         //If f5 is pressed reset the simulation
-        if (IsKeyPressed(KEY_F5)) {
+        if (IsKeyPressed(KEY_R)) {
             InitCloth(); // Initialize function line-34
         }
         //get the framtime to insure the physics does not run at different speeds at different FPS
@@ -237,9 +237,10 @@ int main()
         //every frame set the screen to white so you can't see last frame
         ClearBackground(RAYWHITE);
 
-        //Draw the mouse pos(for debugging) and tell users how to reset the sim.
-        DrawText(TextFormat("Mouse: (%i, %i)", GetMouseX(), GetMouseY()), 10, SCREEN_HEIGHT - 20, 20, BLACK);
-        DrawText("F5 to reset simulation.", 10, SCREEN_HEIGHT - 40, 20, BLACK);
+        //FPS COUNTER
+        DrawText(TextFormat("FPS: %i", (int) round(1.0f / deltaTime)), 10, 10, 20, BLACK);
+        //Tell users how to reset the simulation
+        DrawText("'R' to reset simulation.", 10, SCREEN_HEIGHT - 40, 20, BLACK);
 
         // Draw the cloth line-169
         DrawCloth();
