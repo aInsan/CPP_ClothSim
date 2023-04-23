@@ -4,6 +4,7 @@ This program simulates a cloth made up of a grid of points with interactions bet
 
 # How to Use
 
+Either Download/Compile the program or go [here](aInsan.github.io) to run the simulation
 The simulation will start as soon as the program is run. You can interact with the cloth by clicking to delete points.
 
 # Dependencies
