@@ -19,8 +19,8 @@ Raymath - Math library for Raylib, used for vector arithmetic.
 Either download the latest release for windows or is you are on another platform, 
 Clone the repository and navigate to the directory.
 ```
-git clone https://github.com/aInsan/Simple_CPP_ClothSim.git
-cd Simple_CPP_ClothSim
+git clone https://github.com/aInsan/CPP_ClothSim.git
+cd CPP_ClothSim
 ```
   Compile using your favorite C++ compiler
   
