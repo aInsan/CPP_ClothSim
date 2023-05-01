@@ -4,37 +4,36 @@
 
 using namespace std;
 
-// For display
+// Dimensions For display
 const int SCREEN_WIDTH = 1920;
 const int SCREEN_HEIGHT = 1000;
 
-// Define constants for later
-const int CLOTH_WIDTH = 30; // number of points in grid
-const int CLOTH_HEIGHT = CLOTH_WIDTH;
-const float CLOTH_SIZE = SCREEN_HEIGHT / CLOTH_WIDTH; // Makes sure the cloth fits and is large on screen no matter the dimesions
+const int CLOTH_WIDTH = 36; // Number of rows in grid
+const int CLOTH_HEIGHT = 24;  // Number of columns in grid
+const float CLOTH_SIZE = SCREEN_HEIGHT / CLOTH_HEIGHT; // Makes sure the cloth fits and is large on screen no matter the dimesions
 const float GRAVITY = 0.5f; // to pull points down
 
 // Point class with a position vector, veloctiy vector and 2 properties for interactions with other points
 class Point
 {
 public:
-    Vector2 position;
-    Vector2 velocity;
-    bool isAnchored;
-    bool isRemoved;
+    Vector2 position; //object's x and y positions stored as a Vector 2
+    Vector2 velocity; // '' '' '' '' '' velocities '' '' '' '' '' '' ''
+    bool isAnchored; // Is the point should be able to move
+    bool isRemoved; // Has the point has been removed
 };
 // Cloth Initialization function
-void InitCloth(Point cloth[][CLOTH_WIDTH])
+void InitCloth(Point cloth[][CLOTH_HEIGHT])
 {
     // Iterate through all points in the cloth array
     for (int i = 0; i < CLOTH_WIDTH; i++)
     {
         for (int j = 0; j < CLOTH_HEIGHT; j++)
         {
-            // For each point place it at a certain point 
-            cloth[i][j].position = { CLOTH_SIZE * i + 150, CLOTH_SIZE * j };
+            // For each point place it at clothSize, distance between points,s times it's index and make sure the points are centered horizontally
+            cloth[i][j].position = { (CLOTH_SIZE * i) + ((SCREEN_WIDTH - CLOTH_SIZE * CLOTH_WIDTH) / 2), CLOTH_SIZE * j };
             cloth[i][j].velocity = { 0.0f, 0.0f }; // and set its veloctity vector to zero
-            cloth[i][j].isAnchored = false; //Make all points not anchored and not removed
+            cloth[i][j].isAnchored = false; //Make all points not anchored and not removed at start
             cloth[i][j].isRemoved = false;
         }
     }
@@ -45,7 +44,7 @@ void InitCloth(Point cloth[][CLOTH_WIDTH])
 }
 
 // Function that makes sure the points do not stretch furthur than they can
-void ApplyConstraints(Point cloth[][CLOTH_WIDTH])
+void ApplyConstraints(Point cloth[][CLOTH_HEIGHT])
 {
     // Max length for each point is the CLOTH_SIZE
     const float restLength = CLOTH_SIZE;
@@ -73,17 +72,21 @@ void ApplyConstraints(Point cloth[][CLOTH_WIDTH])
                     //If one of the two points is an anchor only move the other to compensate
                     if (p1.isAnchored)
                     {
+                        // Correction is the 2 points difference * the percentage they are too far apart
                         Vector2 correction = Vector2Scale(delta, (distance - restLength) / distance);
                         p2.position = Vector2Subtract(p2.position, correction);
                     }
                     else if (p2.isAnchored)
                     {
+                        // see ln 75
                         Vector2 correction = Vector2Scale(delta, (distance - restLength) / distance);
                         p1.position = Vector2Add(p1.position, correction);
                     }
                     else
                     {
                         //Otherwise move both points so their distance stays within bounds
+
+                        // see ln 75
                         Vector2 correction = Vector2Scale(delta, (distance - restLength) / (2 * distance));
                         p1.position = Vector2Add(p1.position, correction);
                         p2.position = Vector2Subtract(p2.position, correction);
@@ -91,7 +94,7 @@ void ApplyConstraints(Point cloth[][CLOTH_WIDTH])
                 }
             }
 
-            // Same as before but for p2 in under p1 instead of to the right
+            // Same as before but for the point under p1 instead of to the right
             if (j < CLOTH_HEIGHT - 1)
             {
                 Point& p2 = cloth[i][j + 1];
@@ -123,7 +126,7 @@ void ApplyConstraints(Point cloth[][CLOTH_WIDTH])
 
 // Function that updates the points' properties
 // Has the deltaTime parameter that it uses to always run the program at the same speed
-void UpdateCloth(float deltaTime, Point cloth[][CLOTH_WIDTH])
+void UpdateCloth(float deltaTime, Point cloth[][CLOTH_HEIGHT])
 {
     for (int i = 0; i < CLOTH_WIDTH; i++)
     {
@@ -155,7 +158,7 @@ void UpdateCloth(float deltaTime, Point cloth[][CLOTH_WIDTH])
 }
 
 //Function to display the simulation
-void DrawCloth(Point cloth[][CLOTH_WIDTH])
+void DrawCloth(Point cloth[][CLOTH_HEIGHT])
 {
     for (int i = 0; i < CLOTH_WIDTH - 1; i++)
     {
@@ -184,6 +187,7 @@ void DrawCloth(Point cloth[][CLOTH_WIDTH])
                 DrawLineV(p4, p1, BLACK);
         }
     }
+
         //Draw a red circle at the anchor points
         DrawCircleV(cloth[0][0].position, 5.0f, RED);
         DrawCircleV(cloth[CLOTH_WIDTH / 2][0].position, 5.0f, RED);
@@ -200,17 +204,17 @@ int main()
     //Set up the window using raylib
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Cloth Simulation");
     //Set a FPS cap
-    SetTargetFPS(144);
+    SetTargetFPS(300);
 
-    // Initialize the cloth line-34
+    // Initialize the cloth
     InitCloth(cloth);
 
-    //While the eqc key isn't presses and the x button isn't clicked draw the simulation
+    //While the esc key isn't presses and the x button isn't clicked draw the simulation
     while (!WindowShouldClose())
     {
         //If f5 is pressed reset the simulation
         if (IsKeyPressed(KEY_R)) {
-            InitCloth(cloth); // Initialize function line-34
+            InitCloth(cloth);
         }
         if (IsKeyPressed(KEY_LEFT_SHIFT)) {
             ToggleFullscreen();
@@ -228,11 +232,11 @@ int main()
         ClearBackground(RAYWHITE);
 
         //FPS COUNTER
-        DrawText(TextFormat("FPS: %i", (int)round(1.0f / deltaTime)), 10, 10, 20, BLACK);
+        DrawText(TextFormat("FPS: %i", (int)(1.0f / deltaTime)), 10, 10, 20, BLACK);
         //Tell users how to reset the simulation
-        DrawText("'R' to reset simulation.", (SCREEN_WIDTH / 2) + 180, SCREEN_HEIGHT / 2, 60, Color{ 25, 25, 25,25 });
+        DrawText("'R' to reset simulation.", (SCREEN_WIDTH / 2) - 300, SCREEN_HEIGHT / 2, 60, Color{ 25, 25, 25,25 });
 
-        // Draw the cloth line-169
+        // Draw the points and lines
         DrawCloth(cloth);
 
         //raylib function that marks the end of the drawing to screen
