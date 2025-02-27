@@ -4,8 +4,7 @@ This program simulates a cloth made up of a grid of points with interactions bet
 
 # How to Use
 
-Either Download/Compile the program or go [here](https://aInsan.github.io/) to run the simulation in your browser.
-The simulation will start as soon as the program is run. You can interact with the cloth by clicking to delete points.
+Either Download the comiled exe from the releases tab or compile it yourself
 
 # Dependencies
 This project was made possible thanks to the amazing [raylib](https://www.raylib.com/) library.
